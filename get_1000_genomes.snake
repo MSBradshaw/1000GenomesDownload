@@ -1,0 +1,34 @@
+"""
+rj -t 96:00:00 -n '1k_G_download' -T 64 -m 500G -p long -c 'snakemake -s get_1000_genomes.snake --cores 64'
+"""
+SAMPLES = [ line.strip()  for line in open('1000_genome_s3_ids.txt','r')]
+
+rule all:
+	input:
+		expand('DownloadScripts/{sample}_download.sh',sample=SAMPLES),
+		expand('Bams/{sample}.bam',sample=SAMPLES),
+		expand('Bams/{sample}.bai',sample=SAMPLES)
+		#expand('work/CRAMs/{sample}.final.cram',sample=SAMPLES)
+
+
+rule make_start_files:
+	output:
+		expand('DownloadScripts/{sample}_download.sh',sample=SAMPLES)
+	shell:
+		"""
+			python make_download_scripts.py
+		"""
+
+
+rule download_everything:
+	input:
+		'DownloadScripts/{sample}_download.sh'
+	output:
+		bams='Bams/{sample}.bam',
+		bais='Bams/{sample}.bai'
+	shell:
+		"""
+			bash {input}
+			mv Bams/{wildcards.sample}*.bam Bams/{wildcards.sample}.bam
+			mv Bams/{wildcards.sample}*.bai Bams/{wildcards.sample}.bai
+		"""
