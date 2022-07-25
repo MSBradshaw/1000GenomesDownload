@@ -14,3 +14,6 @@ Example command of how to start the download pipeline
 
 
 `check_downloads.py` is a usefull script to check and ensure everything was downloaded properly
+
+
+`Sequence_Index_Exploration.ipynb` was created to selected a set of samples perfectly balanced by sex and demographics that all used the same capture technology. This is important so CNVkit can be used and fair comparisons can be made across callers.
